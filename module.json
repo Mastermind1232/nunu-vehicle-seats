@@ -2,7 +2,7 @@
   "id": "nunu-vehicle-seats",
   "title": "NuNu Vehicle Seats",
   "description": "Every square a vehicle token covers is a seat. Drop a character on one and it rides there; drag it off and it gets out.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "compatibility": {
     "minimum": "12",
     "verified": "12"
@@ -36,6 +36,6 @@
   ],
   "url": "https://github.com/Mastermind1232/nunu-vehicle-seats",
   "manifest": "https://raw.githubusercontent.com/Mastermind1232/nunu-vehicle-seats/main/module.json",
-  "download": "https://github.com/Mastermind1232/nunu-vehicle-seats/releases/download/v1.0.1/module.zip",
+  "download": "https://github.com/Mastermind1232/nunu-vehicle-seats/releases/download/v1.1.0/module.zip",
   "readme": "https://raw.githubusercontent.com/Mastermind1232/nunu-vehicle-seats/main/README.md"
 }

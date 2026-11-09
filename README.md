@@ -29,10 +29,11 @@ nearest free one rather than refusing the move, because losing a drag is worse
 than sitting one square over. A vehicle with no free seat says so and the token
 stays where it was put, outside.
 
-**Carrying.** Whenever the vehicle moves, everyone aboard moves with it by the
-same amount, and at the same elevation, so passengers in a flying AV stay in it.
-The write is pinned to `game.users.activeGM`, because every GM client sees the
-hook and only one of them should be writing.
+**Carrying.** Whenever the vehicle moves, turns, or climbs, everyone aboard goes
+with it, so passengers in a flying AV stay in it and a car that swings round
+takes its crew round with it rather than spinning under them. The write is
+pinned to `game.users.activeGM`, because every GM client sees the hook and only
+one of them should be writing.
 
 **Getting out.** Move the token off the vehicle. That is all.
 
@@ -58,18 +59,32 @@ One flag on the passenger's token:
 
     flags["nunu-vehicle-seats"].ride = { vehicle: <token id>, ox: <px>, oy: <px> }
 
-The offset is kept in pixels rather than as a seat number. Foundry has already
-snapped the drop to the grid, so an offset is a square anyway, and keeping it in
-pixels means an unsnapped placement or a half-grid vehicle still carries its
-passengers correctly instead of jumping them to the nearest square.
+The offset is in pixels and in the **vehicle's own frame**: where the seat would
+be if the vehicle were not turned. Everything else is derived from it, so one
+stored pair of numbers survives the vehicle being driven, turned, or both at
+once, and boarding a turned vehicle reads the drop point back into that same
+frame rather than needing a second rule.
+
+Pixels rather than a seat index because Foundry has already snapped the drop to
+the grid, so an offset is a square anyway, and an unsnapped placement or a
+half-grid vehicle still carries correctly instead of jumping to the nearest
+square.
 
 Nothing is written to the vehicle, so a vehicle can be deleted, re-imported or
 replaced without leaving a record to clean up anywhere but on the passengers.
 
 ## What it does not do
 
-**Rotation.** Turning a vehicle token rotates its artwork and not the squares it
-occupies, so passengers hold their seats rather than swinging around the vehicle.
+**Grid truth under rotation.** Turning a vehicle rotates its artwork and not the
+squares Foundry thinks it occupies. Passengers follow the artwork, which is what
+anyone looking at the table expects, so a turned vehicle's crew can be standing
+on squares the grid does not consider part of the vehicle. Seats, boarding and
+occupancy are all worked out in the vehicle's own frame, so the module stays
+consistent with itself; it is the grid that disagrees, and it disagrees about
+the vehicle too.
+
+**Passenger facing.** Passengers keep their own rotation. A top-down character
+token turned on its side to match a car reads as a body on the floor.
 
 **The rules.** Getting into a vehicle is an Action and changing seats is a Move
 Action (CP:R p.192, and Hot Pursuit for the chase case). None of that is enforced
@@ -84,7 +99,7 @@ ride and none of them are seats.
 
     node test/run.mjs
 
-30 tests over the real `scripts/main.js`, loaded into a `vm` with the few Foundry
+38 tests over the real `scripts/main.js`, loaded into a `vm` with the few Foundry
 globals it touches mocked. Every one was checked by deliberately breaking the
 module first and confirming the test caught it.
 

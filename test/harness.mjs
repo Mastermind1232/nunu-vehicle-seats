@@ -23,7 +23,7 @@ const sandbox = {
 // Strip the export keywords so the file runs as a plain script, and hand the
 // functions back through a global instead.
 let code = fs.readFileSync(SRC, "utf8").replace(/^export /gm, "");
-code += "\nglobalThis.__api = { decideRide, freeSeat, isVehicle };\n";
+code += "\nglobalThis.__api = { decideRide, freeSeat, isVehicle, turn, seatOnCanvas };\n";
 vm.createContext(sandbox);
 vm.runInContext(code, sandbox, { filename: SRC });
 export const api = sandbox.__api;
