@@ -114,9 +114,18 @@ Hooks.on("updateToken", async (doc, changes, options) => {
   const riders = ridersOf(doc);
   if (!riders.length) return;
 
+  // On updateToken the document still holds the position it came from, so the
+  // destination has to be read out of the changes. Reading doc.x here lands every
+  // passenger on the square the vehicle left, one move behind it for ever.
+  const to = {
+    x: changes.x ?? doc.x,
+    y: changes.y ?? doc.y,
+    elevation: changes.elevation ?? doc.elevation,
+  };
+
   await doc.parent.updateEmbeddedDocuments("Token", riders.map((t) => {
     const r = rideOf(t);
-    return { _id: t.id, x: doc.x + r.ox, y: doc.y + r.oy, elevation: doc.elevation };
+    return { _id: t.id, x: to.x + r.ox, y: to.y + r.oy, elevation: to.elevation };
   }), { [MOD]: { ridealong: true }, animate: true });
 });
 

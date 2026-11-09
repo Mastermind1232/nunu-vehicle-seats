@@ -84,6 +84,11 @@ ride and none of them are seats.
 
     node test/run.mjs
 
-29 tests over the real `scripts/main.js`, loaded into a `vm` with the few Foundry
+30 tests over the real `scripts/main.js`, loaded into a `vm` with the few Foundry
 globals it touches mocked. Every one was checked by deliberately breaking the
 module first and confirming the test caught it.
+
+The carrying tests give the vehicle document its **old** position and put the
+destination in `changes`, which is the shape Foundry hands the hook. A test where
+the two agree passes against a module that reads the stale position, which is how
+1.0.0 shipped with every passenger one move behind the car.
